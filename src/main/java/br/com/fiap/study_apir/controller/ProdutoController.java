@@ -1,18 +1,27 @@
 package br.com.fiap.study_apir.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.fiap.study_apir.model.Produto;
+import br.com.fiap.study_apir.repository.RepositoryProdutoMockup;
+
 @RestController
-@RequestMapping("/produtos")
+@RequestMapping("api/${api.version}/produtos")
 public class ProdutoController {
+
+    // Instanciamos um repositry para utilizar os métodos
+    private RepositoryProdutoMockup mockup = new RepositoryProdutoMockup();
 
     @PostMapping("")
     public ResponseEntity <String> create() {
@@ -23,10 +32,20 @@ public class ProdutoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> findById() {
+    // O @PathVariable serve para o método acessar o argumento presente na rota
+    public ResponseEntity<Produto> findById(@PathVariable Long id) {
+
+        Produto produto = mockup.findById(id);
 
         // Também é possível criar dessa forma (maneira menos verbosa)
-        return ResponseEntity.ok("Maça");
+        return ResponseEntity.ok(produto);
+    }
+
+    // Note que agora temos dois @GetMapping, porém com rotas diferentes
+    @GetMapping
+    public ResponseEntity<List<Produto>> findAll() {
+
+        return ResponseEntity.ok(mockup.finalAll());
     }
 
     @PutMapping("/{id}")
