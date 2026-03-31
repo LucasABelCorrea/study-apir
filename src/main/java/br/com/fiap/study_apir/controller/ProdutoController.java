@@ -1,6 +1,7 @@
 package br.com.fiap.study_apir.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -20,7 +21,7 @@ import br.com.fiap.study_apir.repository.RepositoryProdutoMockup;
 @RequestMapping("api/${api.version}/produtos")
 public class ProdutoController {
 
-    // Instanciamos um repositry para utilizar os métodos
+    // Instanciamos um repository para utilizar os métodos
     private RepositoryProdutoMockup mockup = new RepositoryProdutoMockup();
 
     @PostMapping("")
@@ -34,18 +35,31 @@ public class ProdutoController {
     @GetMapping("/{id}")
     // O @PathVariable serve para o método acessar o argumento presente na rota
     public ResponseEntity<Produto> findById(@PathVariable Long id) {
+        // Torna a variável opcional, ou seja, pode ou não ser nula
+        //Optional <Produto> optProduto = mockup.findById(id);
 
-        Produto produto = mockup.findById(id);
+        /*
+        if(optProduto.isPresent()) {
+            return ResponseEntity.ok(optProduto.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+        */
 
-        // Também é possível criar dessa forma (maneira menos verbosa)
-        return ResponseEntity.ok(produto);
+        // O map só será executado se optProduto == isPresent
+       // return mockup.findById(id).map(p -> ResponseEntity.ok(p)).orElse(ResponseEntity.notFound().build());
+       
+       // Outra maneira de realizar o comando acima, porém com programação funcional no ResponseEntity OK
+       return mockup.findById(id).map(ResponseEntity :: ok).orElse(ResponseEntity.notFound().build());
+
+        // Esse map cumpre o mesmo papel que o if else de cima, porém utilizando as ferramentas do Optional e deixando o código mais eficiente
     }
 
     // Note que agora temos dois @GetMapping, porém com rotas diferentes
     @GetMapping
     public ResponseEntity<List<Produto>> findAll() {
 
-        return ResponseEntity.ok(mockup.finalAll());
+        return ResponseEntity.ok(mockup.findAll());
     }
 
     @PutMapping("/{id}")
@@ -54,9 +68,15 @@ public class ProdutoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete() {
-    
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Produto excluído");
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+        // Declarei o ResponseEntity do tipo Void para informar que essa classe não irá retornar nada, somente deletar o produto com base no ID
+        
+        if (mockup.deleteById(id)) {
+            return ResponseEntity.noContent().build(); // O noContent é usado quando algo é deletado
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+        
     }
 
 }
