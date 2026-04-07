@@ -16,14 +16,20 @@ import lombok.Setter;
 
 @Data // O @Data já possui o @Getter, @Setter e @RequiredArgsConstructor
 public class Produto {
-    private final Long id; // O final indica que o atributo é obrigatório
+    public Produto(Long id, String nome, BigDecimal valor) {
+        this.id = id;
+        this.nome = nome;
+        this.valor = valor;
+    }
+
+    private Long id; // O final indica que o atributo é obrigatório
     private final String nome;
 
     // Usamos o BigDecimal para tornar os valores decimais precisos, para representar valores monetários
     private final BigDecimal valor;
     
     // Como eu declarei as variáveis id e nome com "final" e passei elas no construtor, o Lombok não irá gerar 
-    // setter para essas duas variáveis, pois uma variável do tipo "final" não pode ser modificada após sua inicialização
+    // setter para essas três variáveis, pois uma variável do tipo "final" não pode ser modificada após sua inicialização
     /*public Produto(Long id, String nome) {
         this.id = id;
         this.nome = nome;

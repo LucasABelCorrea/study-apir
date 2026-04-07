@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,11 +26,14 @@ public class ProdutoController {
     private RepositoryProdutoMockup mockup = new RepositoryProdutoMockup();
 
     @PostMapping("")
-    public ResponseEntity <String> create() {
+    public ResponseEntity <Produto> create(@RequestBody Produto produto) { // O @RequestBody indica que o argumento recebido no parâmetro
+        // virá no formato JSON. Dessa forma, minha aplicação irá tratar corretamente
+        //Não esquecer: O Import do RequestBody correto é do spring framework
+
+        //mockup.create(produto);
         
         // Essa linha utiliza o ResponseEntity para pegar o status de criado e também retorna o valor "Produto criado"
-        return ResponseEntity.status(HttpStatus.CREATED).body("Produto criado");
-
+        return ResponseEntity.status(HttpStatus.CREATED).body(mockup.create(produto));
     }
 
     @GetMapping("/{id}")
@@ -63,7 +67,7 @@ public class ProdutoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> update() {
+    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody Produto produto) {
         return ResponseEntity.status(HttpStatus.OK).body("Produto atualizado");
     }
 

@@ -1,6 +1,7 @@
 package br.com.fiap.study_apir.repository;
 
 import java.math.BigDecimal;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -9,6 +10,7 @@ import br.com.fiap.study_apir.model.Produto;
 
 public class RepositoryProdutoMockup {
     private List<Produto> produtos = new ArrayList<>();
+    private long ID = 0L; // Valor do ID mockado inicialmente para simular um "Sequence", ou seja, ser um auto increment
 
     public RepositoryProdutoMockup() {
 
@@ -34,8 +36,8 @@ public class RepositoryProdutoMockup {
         // de memória que é incluído, referenciando um espaço na memória que há as
         // informações dos objetos que queremos.
 
-        produtos.add(new Produto(1L, "Caqui", BigDecimal.valueOf(10.75)));
-        produtos.add(new Produto(30L, "Uva", BigDecimal.valueOf(15.20)));
+        produtos.add(new Produto(++ID, "Caqui", BigDecimal.valueOf(10.75)));
+        produtos.add(new Produto(++ID, "Uva", BigDecimal.valueOf(15.20)));
     }
 
     public List<Produto> findAll() {
@@ -50,4 +52,18 @@ public class RepositoryProdutoMockup {
         return produtos.removeIf(p -> p.getId().equals(id));
     }
 
+    public Produto create(Produto produto) {
+        // 1. Gerar o id e atribuir o id novo ao produto a ser cadastrado
+        produto.setId(++ID);
+
+        // 2. Salvar no BD
+        produtos.add(produto);
+        
+        // 3. Retornar o produto novo
+        return produto;
+    }
+
+    public void update(long id, Produto produto) {
+
+    }
 }
