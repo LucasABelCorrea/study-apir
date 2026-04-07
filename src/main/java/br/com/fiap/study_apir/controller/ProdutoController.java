@@ -3,6 +3,7 @@ package br.com.fiap.study_apir.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +23,8 @@ import br.com.fiap.study_apir.repository.RepositoryProdutoMockup;
 @RequestMapping("api/${api.version}/produtos")
 public class ProdutoController {
 
-    // Instanciamos um repository para utilizar os métodos
-    private RepositoryProdutoMockup mockup = new RepositoryProdutoMockup();
+    @Autowired
+    private RepositoryProdutoMockup mockup;
 
     @PostMapping("")
     public ResponseEntity <Produto> create(@RequestBody Produto produto) { // O @RequestBody indica que o argumento recebido no parâmetro
@@ -62,13 +63,17 @@ public class ProdutoController {
     // Note que agora temos dois @GetMapping, porém com rotas diferentes
     @GetMapping
     public ResponseEntity<List<Produto>> findAll() {
-
         return ResponseEntity.ok(mockup.findAll());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<String> update(@PathVariable Long id, @RequestBody Produto produto) {
-        return ResponseEntity.status(HttpStatus.OK).body("Produto atualizado");
+
+        if (mockup.update(id, produto)) {
+            return ResponseEntity.ok("Produto atualizado");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")

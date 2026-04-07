@@ -6,8 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
 import br.com.fiap.study_apir.model.Produto;
 
+@Service
 public class RepositoryProdutoMockup {
     private List<Produto> produtos = new ArrayList<>();
     private long ID = 0L; // Valor do ID mockado inicialmente para simular um "Sequence", ou seja, ser um auto increment
@@ -58,12 +61,22 @@ public class RepositoryProdutoMockup {
 
         // 2. Salvar no BD
         produtos.add(produto);
-        
+
         // 3. Retornar o produto novo
         return produto;
     }
 
-    public void update(long id, Produto produto) {
+    public boolean update(Long id, Produto produto) {
+        Optional<Produto> optProduto = this.findById(id);
+
+        if (optProduto.isPresent()) {
+            Produto produtoAtual = optProduto.get();
+            produtoAtual.setNome(produto.getNome());
+            produtoAtual.setValor(produto.getValor());
+            return true;
+        } 
+        
+        return false;
 
     }
 }
