@@ -1,5 +1,6 @@
 package br.com.fiap.study_apir.controller;
 
+import java.lang.StackWalker.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.fiap.study_apir.model.Produto;
+import br.com.fiap.study_apir.repository.ProdutoRepository;
 import br.com.fiap.study_apir.repository.RepositoryProdutoMockup;
 
 @RestController
@@ -24,68 +26,80 @@ import br.com.fiap.study_apir.repository.RepositoryProdutoMockup;
 public class ProdutoController {
 
     @Autowired
-    private RepositoryProdutoMockup mockup;
+    private ProdutoRepository repository;
 
     @PostMapping("")
-    public ResponseEntity <Produto> create(@RequestBody Produto produto) { // O @RequestBody indica que o argumento recebido no parâmetro
+    public ResponseEntity<Produto> create(@RequestBody Produto produto) { // O @RequestBody indica que o argumento
+                                                                          // recebido no parâmetro
         // virá no formato JSON. Dessa forma, minha aplicação irá tratar corretamente
-        //Não esquecer: O Import do RequestBody correto é do spring framework
+        // Não esquecer: O Import do RequestBody correto é do spring framework
 
-        //mockup.create(produto);
-        
-        // Essa linha utiliza o ResponseEntity para pegar o status de criado e também retorna o valor "Produto criado"
-        return ResponseEntity.status(HttpStatus.CREATED).body(mockup.create(produto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(produto));
     }
 
     @GetMapping("/{id}")
     // O @PathVariable serve para o método acessar o argumento presente na rota
     public ResponseEntity<Produto> findById(@PathVariable Long id) {
         // Torna a variável opcional, ou seja, pode ou não ser nula
-        //Optional <Produto> optProduto = mockup.findById(id);
+        // Optional <Produto> optProduto = mockup.findById(id);
 
         /*
-        if(optProduto.isPresent()) {
-            return ResponseEntity.ok(optProduto.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-        */
+         * if(optProduto.isPresent()) {
+         * return ResponseEntity.ok(optProduto.get());
+         * } else {
+         * return ResponseEntity.notFound().build();
+         * }
+         */
 
-        // O map só será executado se optProduto == isPresent
-       // return mockup.findById(id).map(p -> ResponseEntity.ok(p)).orElse(ResponseEntity.notFound().build());
-       
-       // Outra maneira de realizar o comando acima, porém com programação funcional no ResponseEntity OK
-       return mockup.findById(id).map(ResponseEntity :: ok).orElse(ResponseEntity.notFound().build());
+        return repository.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
 
-        // Esse map cumpre o mesmo papel que o if else de cima, porém utilizando as ferramentas do Optional e deixando o código mais eficiente
+        // Esse map cumpre o mesmo papel que o if else de cima, porém utilizando as
+        // ferramentas do Optional e deixando o código mais eficiente
     }
 
     // Note que agora temos dois @GetMapping, porém com rotas diferentes
     @GetMapping
     public ResponseEntity<List<Produto>> findAll() {
-        return ResponseEntity.ok(mockup.findAll());
+        return ResponseEntity.ok(repository.findAll());
     }
 
+    /*
     @PutMapping("/{id}")
     public ResponseEntity<String> update(@PathVariable Long id, @RequestBody Produto produto) {
 
+        Optional<Produto> optProduto = repository.findById(id);
+
+        if (optProduto.isPresent()) {
+            
+            repository.save(optProduto);
+        }
+        
+        
         if (mockup.update(id, produto)) {
             return ResponseEntity.ok("Produto atualizado");
         } else {
             return ResponseEntity.notFound().build();
         }
     }
+    */
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
-        // Declarei o ResponseEntity do tipo Void para informar que essa classe não irá retornar nada, somente deletar o produto com base no ID
-        
-        if (mockup.deleteById(id)) {
-            return ResponseEntity.noContent().build(); // O noContent é usado quando algo é deletado
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-        
+        // Declarei o ResponseEntity do tipo Void para informar que essa classe não irá
+        // retornar nada, somente deletar o produto com base no ID
+
+        repository.deleteById(id);
+
+        /*
+         * if (mockup.deleteById(id)) {
+         * return ResponseEntity.noContent().build(); // O noContent é usado quando algo
+         * é deletado
+         * } else {
+         * return ResponseEntity.notFound().build();
+         * }
+        */
+
+        return ResponseEntity.noContent().build();
     }
 
 }
