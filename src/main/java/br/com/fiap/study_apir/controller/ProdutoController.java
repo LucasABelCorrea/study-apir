@@ -63,25 +63,22 @@ public class ProdutoController {
         return ResponseEntity.ok(repository.findAll());
     }
 
-    /*
+    
     @PutMapping("/{id}")
-    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody Produto produto) {
+    public ResponseEntity<Produto> update(@PathVariable Long id, @RequestBody Produto produto) {
 
-        Optional<Produto> optProduto = repository.findById(id);
+        Optional<Produto> optProduto = repository.findById(id); //Optional porque o produto pode não existir
 
         if (optProduto.isPresent()) {
-            
-            repository.save(optProduto);
-        }
-        
-        
-        if (mockup.update(id, produto)) {
-            return ResponseEntity.ok("Produto atualizado");
+            produto.setId(id);
+            Produto produtoAlterado = repository.save(produto); // O save retorna um objeto do tipo produto
+            return ResponseEntity.ok(produtoAlterado);
         } else {
             return ResponseEntity.notFound().build();
         }
+        
     }
-    */
+    
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
