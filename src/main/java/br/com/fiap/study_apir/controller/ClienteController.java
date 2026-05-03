@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.fiap.study_apir.model.Cliente;
 import br.com.fiap.study_apir.repository.ClienteRepository;
 
-
 @RestController
 @RequestMapping("api/${api.version}/clientes")
 public class ClienteController {
@@ -28,7 +27,7 @@ public class ClienteController {
 
     // Insert into
     @PostMapping("")
-    public ResponseEntity<Cliente> create (@RequestBody Cliente cliente) {
+    public ResponseEntity<Cliente> create(@RequestBody Cliente cliente) {
         return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(cliente));
     }
 
@@ -41,16 +40,16 @@ public class ClienteController {
     // Select By Id
     @GetMapping("/{id}")
     public ResponseEntity<Cliente> findById(@PathVariable Long id) {
-        return repository.findById(id).map(ResponseEntity :: ok).orElse(ResponseEntity.notFound().build());
+        return repository.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     // Update
     @PutMapping("/{id}")
-    public ResponseEntity<Cliente> update (@PathVariable Long id, @PathVariable Cliente cliente) {
+    public ResponseEntity<Cliente> update(@PathVariable Long id, @RequestBody Cliente cliente) {
 
         Optional<Cliente> optCliente = repository.findById(id);
 
-         if (optCliente.isPresent()) {
+        if (optCliente.isPresent()) {
             cliente.setId(id);
             Cliente clienteAlterado = repository.save(cliente); // O save retorna um objeto do tipo produto
             return ResponseEntity.ok(clienteAlterado);
@@ -60,7 +59,7 @@ public class ClienteController {
     }
 
     // Delete
-     @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         repository.deleteById(id);
         return ResponseEntity.noContent().build();
