@@ -4,13 +4,12 @@ import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 // Essas anotações geram automaticamente os Gettes e Setters na minha aplicação
 /*
@@ -26,6 +25,7 @@ import lombok.Setter;
 public class Produto {
 
     @Id // Informa que o próximo atributo será o ID (Primary Key)
+    @GeneratedValue (strategy = GenerationType.AUTO) // Para gerar os valores do ID AUTOMATICAMENTE, de acordo com a melhor estratégia para o BD que estou utilizando
     private Long id; // O final indica que o atributo é obrigatório
 
     @Column(name = "nome_produto_char", length = 100, columnDefinition = "char(100)", nullable = false) // Mudo o nome da coluna na BASE DE DADOS e defino o tamanho MÁXIMO (VARCHAR) de caracteres na coluna (Crio uma coluna nova)
